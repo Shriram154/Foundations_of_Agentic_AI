@@ -1,0 +1,41 @@
+filter_emails:
+  description: >
+    Analyze the incoming unread emails provided below:
+    {emails}
+
+    STRICT FILTERING RULE:
+    1. Check the sender's email address. ONLY skip emails if the sender address explicitly contains 'noreply', 'no-reply', 'donotreply', 'do-not-reply', or 'mailer-daemon'.
+    2. Placement invitations, pre-placement talks, recruitment updates, hackathon invites, workshop circulars, faculty emails, and student inquiries MUST ALWAYS BE CLASSIFIED AS 'ACTIONABLE' SO A DETAILED DRAFT RESPONSE IS CREATED.
+  expected_output: >
+    A structured list classifying each email as ACTIONABLE or DO_NOT_REPLY, including Sender, Subject, and Context.
+  agent: email_filter_agent
+
+action_required_emails:
+  description: >
+    Review the incoming emails:
+    {emails}
+
+    Focus on all emails classified as ACTIONABLE.
+    Extract key questions, dates, deadlines, venue details, and context. Use web search tools if extra background information is needed.
+  expected_output: >
+    A comprehensive summary of key points, research findings, and response guidelines for each actionable email.
+  agent: email_action_agent
+
+draft_responses:
+  description: >
+    Refer to the incoming emails:
+    {emails}
+
+    For EVERY ACTIONABLE email, compose a detailed, highly thorough, formal, and professional multi-paragraph email response.
+
+    DRAFT WRITING STANDARDS:
+    - Include a formal greeting (e.g., 'Dear Placement Team,' or 'Dear Faculty / Team,').
+    - Write a detailed 3 to 4 paragraph body explaining the response thoroughly, confirming participation, asking relevant queries about eligibility/timings/documents, or thanking the sender.
+    - Use bullet points for key steps, eligibility criteria, deadlines, or action items where applicable.
+    - Include a formal closing (e.g., 'Best regards,', 'Sincerely,') with full student contact placeholders.
+
+    Invoke the `create_draft` tool for EVERY actionable email, passing the recipient email address, subject, and complete multi-paragraph message body.
+    STRICT RULE: Only skip calling `create_draft` if the sender email explicitly contains 'noreply', 'no-reply', or 'donotreply'.
+  expected_output: >
+    Confirmation logs for each detailed draft created in the user's Gmail inbox.
+  agent: email_response_writer
